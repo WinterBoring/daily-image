@@ -53,8 +53,8 @@
 
 ## 🌍 在线预览地址
 
-- 🔗 **柳神 页面**：[https://bing.liushen.fun/](https://bing.liushen.fun/)
-- 🔗 **WinterBoring 页面**：[https://bing.bluelife.dpdns.org/](https://bing.bluelife.dpdns.org/)
+- 🔗 **柳神**：[https://bing.liushen.fun/](https://bing.liushen.fun/)
+- 🔗 **WinterBoring**：[https://bing.bluelife.dpdns.org/](https://bing.bluelife.dpdns.org/)
 
 ---
 
