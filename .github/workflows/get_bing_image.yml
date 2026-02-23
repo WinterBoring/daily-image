@@ -2,8 +2,8 @@ name: Daily Get Bing Image
 
 on:
   schedule:
-    # 设置时区为中国时区 (UTC+8)，每天中午12点运行
-    - cron: "0 4 * * *"
+    # 设置时区为中国时区 (UTC+8)，每天早上6点运行
+    - cron: "0 20 * * *"
   workflow_dispatch:
 
 env:
