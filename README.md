@@ -68,7 +68,7 @@
    - 访问 `https://bing.bluelife.dpdns.org/api/daily` 或者 `https://bing.bluelife.dpdns.org/daily.webp` 获取今日壁纸。
    - 可在网页中直接使用，如：`<img src="https://bing.bluelife.dpdns.org/api/daily" alt="今日壁纸" />`。
 
-更多参数欢迎访问地址：[[https://bing.bluelife.dpdns.org/api](https://bing.bluelife.dpdns.org/api) 进行查询。
+更多参数欢迎访问地址：[https://bing.bluelife.dpdns.org/api](https://bing.bluelife.dpdns.org/api) 进行查询。
 
 ## 📜 License
 
