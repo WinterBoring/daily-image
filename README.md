@@ -24,18 +24,27 @@
 ```
 .
 ├── static/
-│   ├── daily.webp            # 今日壁纸（用于网页展示）
-│   ├── daily.jpeg            # 今日壁纸 JPEG 压缩版
-│   ├── original.jpeg         # 今日壁纸原图（最高画质）
-│   ├── picture/YYYY-MM/
-│   │   ├── YYYY-MM-DD.webp   # 各日期壁纸
-│   └── picture/index.json    # 壁纸信息索引
-├── page/
-│   ├── index.html            # 网页展示模板
+│   ├── daily.webp            # 今日壁纸（WebP 格式，用于网页展示）
+│   ├── daily.jpeg            # 今日壁纸（JPEG 压缩版）
+│   ├── original.jpeg         # 今日壁纸（原图最高画质）
+│   └── picture/
+│       ├── index.json        # 🌟 更新：包含 months 列表和详细信息的 JSON 索引
+│       ├── 2026-02/          # 🌟 新增：按月份生成的独立子文件夹
+│       │   ├── 2026-02-25.webp
+│       │   └── 2026-02-24.webp
+│       └── 2026-01/          # 🌟 新增：历史月份文件夹（保留最近 12 个月）
+│           └── 2026-01-31.webp
+├── page/                     # （前端静态文件存放区）
+│   ├── index.html            # 🌟 更新：新增了下拉月份选择器的前端模板
 │   └── favicon.ico           # 网站图标
-├── main.py                   # 主 Python 脚本
-├── .github/workflows/
-│   └── bing-image.yml        # GitHub Actions 定时任务配置
+├── api/                      # 🌟 新增：EdgeOne 边缘函数目录 (根据你的代码推测)
+│   ├── random.js             # 随机图片 API (已兼容新版按月 JSON)
+│   ├── daily.js              # 今日图片 API (已修复 Headers 报错)
+│   └── index.js              # API 导航页
+├── edgeone.json              # 🌟 新增：EdgeOne 路由、缓存与跨域配置 (已修复路径规则)
+├── main.py                   # 🌟 更新：按月分类、12个月清理逻辑的主 Python 脚本
+└── .github/workflows/
+    └── bing-image.yml        # GitHub Actions 定时任务配置 (保持不变)
 ```
 
 ---
