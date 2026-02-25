@@ -21,7 +21,7 @@ os.makedirs(PICTURE_FOLDER, exist_ok=True)
 def fetch_bing_images(n=8):
     """获取最新的Bing壁纸信息"""
     try:
-        url = f"https://www.bing.com/HPImageArchive.aspx?format=js&idx=8&n={n}&uhd=1&mkt=zh-CN"
+        url = f"https://www.bing.com/HPImageArchive.aspx?format=js&idx=15&n={n}&uhd=1&mkt=zh-CN"
         resp = requests.get(url)
         resp.raise_for_status()
         data = resp.json()
