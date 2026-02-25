@@ -44,7 +44,7 @@
 
 通过 GitHub Actions 实现每日定时更新：
 
-- 使用 `cron: '0 20 * * *'`（UTC 时间），即北京时间早上 6 点。
+- 使用 `cron: '0 22 * * *'`（UTC 时间），即北京时间早上 6 点。
 - 运行 `main.py` 获取并保存壁纸。
 - 将图片和网页内容推送到 `page` 分支。
 - 使用 GitHub Pages 公开展示（`https://github.com/WinterBoring/daily-image/`）。
