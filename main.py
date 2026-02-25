@@ -167,18 +167,9 @@ def update_index(index_list):
         logging.error(f"更新index.json失败: {e}")
 
 def main():
-    logging.info("开始获取近 16 天的 Bing 图片...")
+    logging.info("开始获取 Bing 图片...")
     existing_index = load_existing_index()
-    
-    # 第一次请求：获取最近的 8 张 (idx 从 0 开始)
-    images_part1 = fetch_bing_images(n=8, idx=0) 
-    
-    # 第二次请求：获取更早的 8 张 (idx 从 8 开始)
-    # 注意：你需要确保你的 fetch_bing_images 函数支持传入 idx 参数
-    images_part2 = fetch_bing_images(n=8, idx=8) 
-    
-    # 合并结果
-    new_images = images_part1 + images_part2
+    new_images = fetch_bing_images(8)
 
     if not new_images:
         logging.error("未获取到任何新图像信息")
