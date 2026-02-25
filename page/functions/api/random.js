@@ -12,7 +12,15 @@ export default async function onRequest(context) {
     return new Response("Failed to load index.json", { status: 502 });
   }
 
-  let images = await fetchResp.json();
+  // 接收原始数据
+  let data = await fetchResp.json();
+
+  // 🌟 核心修改点：兼容新版对象格式和老版数组格式
+  let images = Array.isArray(data) ? data : (data.images || []);
+
+  if (images.length === 0) {
+    return new Response("No images found in index", { status: 404 });
+  }
 
   // 去掉最后一张，防止过期
   if (images.length > 1) {
@@ -23,12 +31,12 @@ export default async function onRequest(context) {
   const randomImage = images[Math.floor(Math.random() * images.length)];
   const redirect = url.searchParams.get("redirect") === "true";
 
-  const imagePath = randomImage.path; // e.g. /picture/2025-08-24.webp
+  const imagePath = randomImage.path; // e.g. /picture/2026-02/2026-02-25.webp
   const imageUrl = new URL(imagePath, request.url);
 
   if (redirect) {
-    // 🚀 302 跳转
-    return Response.redirect(imagePath, 302);
+    // 🚀 302 跳转 (建议转为完整的 URL 字符串)
+    return Response.redirect(imageUrl.toString(), 302);
   }
 
   // 🖼 直接返回图片二进制，走 EO 节点缓存
