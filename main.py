@@ -136,8 +136,8 @@ def merge_and_update_images(new_images, existing_index):
     combined_index = existing_index + updated_index
     combined_index.sort(key=lambda x: x["date"], reverse=True)
     
-    # 保留最近90天的数据
-    cutoff_date = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d")
+    # 保留最近365天的数据
+    cutoff_date = (datetime.now() - timedelta(days=365)).strftime("%Y-%m-%d")
     filtered_index = []
     
     for item in combined_index:
