@@ -4,7 +4,7 @@
   <img src="https://raw.githubusercontent.com/WinterBoring/daily-image/refs/heads/page/daily.webp" alt="Daily Bing Wallpaper" width="600" />
 </p>
 
-这是一个基于 GitHub Actions 自动获取并展示 Bing 每日高清壁纸的项目。每天早上 6 点（中国时间）自动抓取最新壁纸，生成 WebP/JPEG 格式图片，维护最近 90 天的壁纸，并发布至 `page` 分支，用于 Pages 服务部署并展示。
+这是一个基于 GitHub Actions 自动获取并展示 Bing 每日高清壁纸的项目。每天早上 6 点（中国时间）自动抓取最新壁纸，生成 WebP/JPEG 格式图片，维护12个月内的壁纸，并发布至 `page` 分支，用于 Pages 服务部署并展示。
 
 **推荐使用 EO Pages 服务部署，目前已支持随机图 API 功能。**
 
@@ -14,7 +14,7 @@
 
 - 📅 **每日自动更新**：每天定时从 Bing 官方源抓取高清壁纸（2560x1600 或 1920x1080）。
 - 🖼️ **多格式保存**：保存为 `webp`, `jpeg` 等格式，兼顾网页加载与高清查看。
-- 📂 **历史记录管理**：维护 90 天的壁纸及信息索引 `index.json`。
+- 📂 **历史记录管理**：维护12个月内的壁纸及信息索引 `index.json`。
 - 🌐 **网页展示支持**：与 EO Pages 搭配，展示壁纸和版权信息。
 
 ---
@@ -78,5 +78,6 @@
 
 ## 🤝 致谢
 
+- [柳神](https://bing.liushen.fun/)
 - 微软 Bing 壁纸源
 - GitHub Actions 自动化平台
