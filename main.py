@@ -30,7 +30,6 @@ def fetch_bing_images(n=8):
         for image in data["images"]:
             date = datetime.strptime(image["enddate"], "%Y%m%d").strftime("%Y-%m-%d")
             logging.info(f"获取到图片: {date}")
-            # 生成高分辨率和备用URL
             urlbase = image["urlbase"]
             high_res_url = f"https://www.bing.com{urlbase}_UHD.jpg"
             fallback_url = f"https://www.bing.com{urlbase}_1920x1080.jpg"
@@ -76,6 +75,8 @@ def load_existing_index():
 def save_image(img, filepath):
     """保存图片到指定路径"""
     try:
+        # 确保图片所在的子目录存在
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
         # 限制最大尺寸
         max_width, max_height = 2560, 1600
         img.thumbnail((max_width, max_height))
@@ -87,7 +88,7 @@ def save_image(img, filepath):
         return False
 
 def merge_and_update_images(new_images, existing_index):
-    """合并新图片和现有索引，并更新文件"""
+    """合并新图片和现有索引，并按月份保存文件"""
     today_str = datetime.now().strftime("%Y-%m-%d")
     logging.info(f"今天的日期: {today_str}")
     updated_index = []
@@ -99,10 +100,15 @@ def merge_and_update_images(new_images, existing_index):
         logging.info(f"处理图片: {date}")
         if date in existing_dates:
             logging.info(f"图片 {date} 已存在，跳过")
-            continue  # 已存在的图片跳过
+            continue
             
+        # --- 修改点：按月份创建文件夹路径 ---
+        month_str = date[:7]  # 获取 YYYY-MM
         filename = f"{date}.webp"
-        filepath = os.path.join(PICTURE_FOLDER, filename)
+        # 实际存储路径：static/picture/2026-02/2026-02-25.webp
+        filepath = os.path.join(PICTURE_FOLDER, month_str, filename)
+        # 存入 index.json 的访问路径：/picture/2026-02/2026-02-25.webp
+        relative_path = f"/picture/{month_str}/{filename}"
         
         img = download_image(img_info["url"])
         if img is None:
@@ -111,49 +117,49 @@ def merge_and_update_images(new_images, existing_index):
         if not save_image(img, filepath):
             continue
             
-        # 如果是今天的图，保存额外几份
+        # 如果是今天的图，保存到 static 根目录供直接引用
         if date == today_str:
-            logging.info("保存今天的图片为 daily.webp / daily.jpeg / original.jpeg , 今日时间: " + date)
+            logging.info("保存今日预览图: daily.webp / daily.jpeg")
             save_image(img, os.path.join(STATIC_FOLDER, "daily.webp"))
             img.save(os.path.join(STATIC_FOLDER, "daily.jpeg"), "JPEG", quality=95, optimize=True)
             img.save(os.path.join(STATIC_FOLDER, "original.jpeg"), "JPEG", quality=100)
-            logging.info("保存了 daily.webp / daily.jpeg / original.jpeg")
             
         updated_index.append({
             "filename": filename,
             "date": date,
-            "path": f"/picture/{filename}",
+            "path": relative_path,
             "copyright": img_info.get("copyright", ""),
             "url": img_info.get("url", "")
         })
     
-    # 合并现有和新数据
+    # 合并数据并排序
     combined_index = existing_index + updated_index
-    
-    # 按日期排序(最新的在前面)
     combined_index.sort(key=lambda x: x["date"], reverse=True)
     
     # 保留最近90天的数据
     cutoff_date = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d")
     filtered_index = []
-    removed_files = set()
     
     for item in combined_index:
         if item["date"] > cutoff_date:
             filtered_index.append(item)
         else:
-            # 记录要删除的文件
-            removed_files.add(os.path.join(PICTURE_FOLDER, item["filename"]))
-            logging.info(f"图片 {item['date']} 超过90天，标记为删除")
-    
-    # 删除超过90天的旧图片
-    for filepath in removed_files:
-        try:
-            if os.path.exists(filepath):
-                os.remove(filepath)
-                logging.info(f"删除旧图片: {filepath}")
-        except Exception as e:
-            logging.error(f"删除旧图片失败 {filepath}: {e}")
+            # --- 修改点：根据 path 字段还原物理路径进行删除 ---
+            # item["path"] 类似于 "/picture/2026-01/2026-01-01.webp"
+            # 去掉开头的 / 并与 static 目录拼接
+            filepath = os.path.join(STATIC_FOLDER, item["path"].lstrip('/'))
+            try:
+                if os.path.exists(filepath):
+                    os.remove(filepath)
+                    logging.info(f"物理删除过期图片: {filepath}")
+                    
+                    # 可选：尝试删除空的月份文件夹
+                    month_dir = os.path.dirname(filepath)
+                    if not os.listdir(month_dir):
+                        os.rmdir(month_dir)
+                        logging.info(f"删除空目录: {month_dir}")
+            except Exception as e:
+                logging.error(f"删除旧图片失败 {filepath}: {e}")
     
     return filtered_index
 
