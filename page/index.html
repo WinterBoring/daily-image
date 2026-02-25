@@ -160,7 +160,6 @@
         margin: 0 20px;
       }
 
-      /* 添加左上角和右下角的直角装饰 */
       .yiyan-content::before,
       .yiyan-content::after {
         content: '';
@@ -192,24 +191,52 @@
         border-top-color: #fff;
         animation: spin 1s ease-in-out infinite;
       }
-
-      /* .yiyan-signature {
-        width: 760px;
-        max-width: 100%;
-        text-align: right;
-        padding: 20px 0;
-      } */
       
       @keyframes spin {
         to { transform: rotate(360deg); }
       }
 
-      /* History Grid */
+      /* History Grid 及 筛选器样式 */
       .history-container {
         padding: 40px 20px;
         background: #1e1e1e;
         flex: 1;
       }
+
+      /* 新增月份选择器容器样式 */
+      .filter-container {
+        max-width: 1200px;
+        margin: 0 auto 20px auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .filter-container h2 {
+        font-size: 1.5rem;
+        font-weight: 300;
+      }
+
+      .filter-container select {
+        background: #2d2d2d;
+        color: #e0e0e0;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 8px 15px;
+        border-radius: 5px;
+        font-size: 1rem;
+        outline: none;
+        cursor: pointer;
+        font-family: inherit;
+        transition: border-color 0.3s;
+      }
+
+      .filter-container select:hover,
+      .filter-container select:focus {
+        border-color: #fff;
+      }
+
       .history {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -303,7 +330,7 @@
         transform: translateY(0);
       }
 
-      /* 更新后的Modal样式 */
+      /* Modal样式 */
       .modal {
         position: fixed;
         top: 0;
@@ -313,7 +340,7 @@
         background: rgba(30, 30, 30, 0);
         backdrop-filter: blur(0);
         z-index: 1000;
-        display: none; /* 初始隐藏 */
+        display: none; 
         align-items: center;
         justify-content: center;
         opacity: 0;
@@ -422,7 +449,6 @@
     </style>
   </head>
   <body>
-    <!-- 悬浮菜单 -->
     <nav class="floating-menu">
       <a href="/" style="display: flex; align-items: center; margin: 0 5px 0 5px">
         <img src="favicon.ico" alt="Icon" class="menu-icon" />
@@ -454,7 +480,7 @@
       <div class="overlay">
         <div class="center-text">
           <h1>Bing每日一图</h1>
-          <p>腾讯EO强力支持，实现每日一图接口，保存最近90天内的bing壁纸</p>
+          <p>腾讯EO强力支持，实现每日一图接口，保存最近12个月内的bing壁纸</p>
           <p>每日更新，每日精彩</p>
         </div>
         <div class="date" id="hero-date"></div>
@@ -470,10 +496,14 @@
     </div>
 
     <div class="history-container">
+      <div class="filter-container">
+        <h2>历史图集</h2>
+        <select id="monthSelector"></select>
+      </div>
+
       <div class="history" id="history"></div>
     </div>
 
-    <!-- 页脚 -->
     <footer>
       <script defer src="https://cn.vercount.one/js"></script>
 
@@ -523,49 +553,35 @@
       </div>
 
       <script>
-        // 动态年份显示
         document.getElementById("year").textContent = new Date().getFullYear();
         
-        // 计算网站运行时间和下次更新时间
         function updateTimes() {
-          // 网站开始运行的日期（请修改为您的网站上线日期）
-          const startDate = new Date('2026-2-22'); // 示例日期，请替换为实际上线日期
+          const startDate = new Date('2026-2-22');
           const now = new Date();
-          
-          // 计算已运行天数
           const runningDays = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
           document.getElementById("running-days").textContent = runningDays + " 天";
           
-          // 设置目标更新时间为【今天的早上 6 点】
           let targetDate = new Date(now);
-          targetDate.setHours(6, 0, 0, 0); // 设定为 06:00:00
+          targetDate.setHours(6, 0, 0, 0); 
 
-          // 判定逻辑：如果现在已经过了 6 点，目标就应该是【明天的早上 6 点】
           if (now >= targetDate) {
             targetDate.setDate(targetDate.getDate() + 1);
           }
           
-          // 计算剩余时间（毫秒）
           let diff = targetDate - now;
-          
           const hours = Math.floor(diff / (1000 * 60 * 60));
           const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
           const seconds = Math.floor((diff % (1000 * 60)) / 1000);
           
-          // 格式化显示
           document.getElementById("next-update").textContent = 
             `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
         
-        // 初始更新
         updateTimes();
-        
-        // 每秒更新一次倒计时
         setInterval(updateTimes, 1000);
       </script>
     </footer>
 
-    <!-- Modal -->
     <div class="modal" id="imageModal">
       <button class="modal-close" id="modalClose">&times;</button>
       <div class="modal-content">
@@ -578,7 +594,7 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", () => {
-        // Modal elements
+        // Modal logic
         const modal = document.getElementById("imageModal");
         const modalImage = document.getElementById("modalImage");
         const modalCaption = document.getElementById("modalCaption");
@@ -588,36 +604,25 @@
           modal.classList.remove("active");
           setTimeout(() => {
             modal.style.display = "none";
-          }, 300); // 匹配CSS过渡时间
+          }, 300);
         }
 
         function showModal() {
           modal.style.display = "flex";
-          // 强制重绘，确保动画运行
           void modal.offsetWidth;
           modal.classList.add("active");
         }
 
-        // Close modal when clicking the close button
         modalClose.addEventListener("click", closeModal);
-
-        // Close modal when clicking outside the image
         modal.addEventListener("click", (e) => {
-          if (e.target === modal) {
-            closeModal();
-          }
+          if (e.target === modal) closeModal();
         });
-
-        // Close modal with Escape key
         document.addEventListener("keydown", (e) => {
-          if (e.key === "Escape" && modal.classList.contains("active")) {
-            closeModal();
-          }
+          if (e.key === "Escape" && modal.classList.contains("active")) closeModal();
         });
 
         // 图片加载函数
         function loadImage(imgElement, src) {
-          // imgElement.classList.add("img-loading");
           const loader = new Image();
           loader.src = src;
           loader.onload = () => {
@@ -626,99 +631,140 @@
           };
           loader.onerror = () => {
             imgElement.classList.remove("img-loading");
-            console.error("图片加载失败:", src);
           };
         }
 
         // 获取一言
         const yiyanContent = document.querySelector('.yiyan-content');
-        
         fetch('https://v2.xxapi.cn/api/yiyan?type=hitokoto')
           .then(response => response.json())
           .then(data => {
             if (data.code === 200 && data.data) {
-              // 创建淡入效果
               yiyanContent.innerHTML = `<span style="opacity: 0; transition: opacity 1s ease;">${data.data}</span>`;
-              
-              // 强制重绘后显示文字
               setTimeout(() => {
                 const textSpan = yiyanContent.querySelector('span');
-                if (textSpan) {
-                  textSpan.style.opacity = '1';
-                }
+                if (textSpan) textSpan.style.opacity = '1';
               }, 100);
             } else {
               yiyanContent.textContent = '生活，是一场无法回放的电影，我们都是自己的导演。';
             }
           })
-          .catch(error => {
-            console.error('获取一言失败:', error);
+          .catch(() => {
             yiyanContent.textContent = '生活，是一场无法回放的电影，我们都是自己的导演。';
           });
 
+        // 获取并渲染图集数据
+        let renderTimeouts = [];
+
         fetch("/picture/index.json")
           .then((res) => res.json())
-            .then((data) => {
-            if (!Array.isArray(data) || data.length === 0) {
-              console.error("index.json 内容不合法");
-              return;
+          .then((data) => {
+            let imagesData = [];
+            let monthsData = [];
+
+            // 兼容老格式（纯数组）和新格式（带 months 字典）
+            if (Array.isArray(data)) {
+              imagesData = data;
+              // 自动从旧数据中提取月份
+              const monthSet = new Set();
+              imagesData.forEach(item => {
+                if(!item.month) item.month = item.date.substring(0, 7);
+                monthSet.add(item.month);
+              });
+              monthsData = Array.from(monthSet).sort().reverse();
+            } else {
+              imagesData = data.images || [];
+              monthsData = data.months || [];
             }
 
-            // 默认将第一张作为今日图
-            const today = data[0];
+            if (imagesData.length === 0) return;
+
+            // 1. 设置 Hero 区域（永远取全部数据的最新一张）
+            const today = imagesData[0];
             const heroImg = document.getElementById("hero-img");
             document.getElementById("hero-date").textContent = today.date;
             document.getElementById("hero-copy").textContent = today.copyright;
             loadImage(heroImg, today.path);
 
-            // 其余为历史图
             const historyEl = document.getElementById("history");
+            const monthSelector = document.getElementById("monthSelector");
 
-            // 逐个添加卡片，带动画
-            data.forEach((item, index) => {
-              setTimeout(() => {
-              const card = document.createElement("div");
-              card.className = "card";
-              card.style.opacity = "0";
-              card.style.transform = "translateY(50px)";
-              card.style.transition = "opacity 1.0s cubic-bezier(.4,2,.6,1), transform 1.0s cubic-bezier(.4,2,.6,1)";
-
-              const img = document.createElement("img");
-              img.alt = item.date;
-              img.className = "img-loading";
-              img.src =
-                "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMmQyZDJkIi8+PC9zdmc+";
-
-              const dateLabel = document.createElement("div");
-              dateLabel.className = "date-label";
-              dateLabel.textContent = item.date;
-
-              const copyText = document.createElement("div");
-              copyText.className = "copy-text";
-              copyText.textContent = item.copyright;
-
-              card.appendChild(img);
-              card.appendChild(dateLabel);
-              card.appendChild(copyText);
-              historyEl.appendChild(card);
-
-              // 加载实际图片
-              loadImage(img, item.path);
-
-              // Add click event to show modal
-              card.addEventListener("click", () => {
-                modalImage.src = item.path;
-                modalCaption.textContent = `${item.date} - ${item.copyright}`;
-                showModal();
-              });
-
-              // 触发动画
-              setTimeout(() => {
-                card.style.opacity = "1";
-                card.style.transform = "translateY(0)";
-              }, 50);
-              }, index * 80); // 每个卡片延迟80ms
+            // 2. 渲染月份下拉框
+            monthsData.forEach(monthStr => {
+              const option = document.createElement("option");
+              option.value = monthStr;
+              option.textContent = monthStr + " 月份";
+              monthSelector.appendChild(option);
             });
+
+            // 3. 渲染指定月份的画廊函数
+            function renderGallery(month) {
+              // 清除之前的渲染卡片和动画定时器
+              historyEl.innerHTML = "";
+              renderTimeouts.forEach(clearTimeout);
+              renderTimeouts = [];
+
+              // 过滤选定月份的图片
+              const currentMonthImages = imagesData.filter(item => 
+                (item.month || item.date.substring(0, 7)) === month
+              );
+
+              currentMonthImages.forEach((item, index) => {
+                const timeoutId = setTimeout(() => {
+                  const card = document.createElement("div");
+                  card.className = "card";
+                  card.style.opacity = "0";
+                  card.style.transform = "translateY(50px)";
+                  card.style.transition = "opacity 0.8s ease, transform 0.8s ease";
+
+                  const img = document.createElement("img");
+                  img.alt = item.date;
+                  img.className = "img-loading";
+                  img.src = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMmQyZDJkIi8+PC9zdmc+";
+
+                  const dateLabel = document.createElement("div");
+                  dateLabel.className = "date-label";
+                  dateLabel.textContent = item.date;
+
+                  const copyText = document.createElement("div");
+                  copyText.className = "copy-text";
+                  copyText.textContent = item.copyright;
+
+                  card.appendChild(img);
+                  card.appendChild(dateLabel);
+                  card.appendChild(copyText);
+                  historyEl.appendChild(card);
+
+                  loadImage(img, item.path);
+
+                  card.addEventListener("click", () => {
+                    modalImage.src = item.path;
+                    modalCaption.textContent = `${item.date} - ${item.copyright}`;
+                    showModal();
+                  });
+
+                  // 触发飞入动画
+                  setTimeout(() => {
+                    card.style.opacity = "1";
+                    card.style.transform = "translateY(0)";
+                  }, 50);
+                }, index * 80); // 每个卡片延迟进入
+                
+                renderTimeouts.push(timeoutId);
+              });
+            }
+
+            // 4. 初始化（默认渲染下拉框的第一个，即最新月份）
+            if (monthsData.length > 0) {
+              monthSelector.value = monthsData[0];
+              renderGallery(monthsData[0]);
+            }
+
+            // 5. 监听选择器变化
+            monthSelector.addEventListener("change", (e) => {
+              renderGallery(e.target.value);
+            });
+
           })
           .catch((err) => console.error("加载 index.json 失败", err));
       });
