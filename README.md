@@ -53,7 +53,7 @@
 
 ## 🌍 在线预览地址
 
-- 🔗 **柳神**：[https://bing.liushen.fun/](https://bing.liushen.fun/)
+- 🔗 **LiuShen**：[https://bing.liushen.fun/](https://bing.liushen.fun/)
 - 🔗 **WinterBoring**：[https://bing.bluelife.dpdns.org/](https://bing.bluelife.dpdns.org/)
 
 ---
@@ -78,6 +78,6 @@
 
 ## 🤝 致谢
 
-- [柳神](https://bing.liushen.fun/)
+- [LiuShen](https://github.com/willow-god/daily-image/)
 - 微软 Bing 壁纸源
 - GitHub Actions 自动化平台
