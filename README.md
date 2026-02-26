@@ -70,7 +70,7 @@
 ## 🛺 使用方式
 
 1. **随机图 API**：
-   - 访问 `https://bing.bluelife.dpdns.org/api/random` 获取随机壁纸。
+   - 访问 `https://bing.bluelife.dpdns.org/api/random` 获取随机壁纸(365天随机)。
    - 可在网页中直接使用，如：`<img src="https://bing.bluelife.dpdns.org/api/random" alt="随机壁纸" />`。
 
 2. **每日一图 API**：
