@@ -36,7 +36,7 @@
 │           └── 2026-01-31.webp
 ├── page/                     # （前端静态文件存放区）
 │   ├── index.html            # 🌟 更新：新增了下拉月份选择器的前端模板
-│   └── favicon.ico           # 网站图标
+│   └── favicon.ico           # 🌟 更新：网站图标
 ├── api/                      # 🌟 新增：EdgeOne 边缘函数目录
 │   ├── random.js             # 随机图片 API (已兼容新版按月 JSON)
 │   ├── daily.js              # 今日图片 API (已修复 Headers 报错)
