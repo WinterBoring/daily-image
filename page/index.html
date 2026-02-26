@@ -505,6 +505,10 @@
     </div>
 
     <footer>
+      <p style="color: #666; font-size: 0.9em;">
+        🕒 最后同步时间：<span id="last-sync-time">加载中...</span>
+      </p>
+	  
       <script defer src="https://cn.vercount.one/js"></script>
 
       <div style="margin-bottom: 0.5em">
@@ -659,6 +663,13 @@
         fetch("/picture/index.json")
           .then((res) => res.json())
           .then((data) => {
+            // 👇 新增：提取并显示最后同步时间 👇
+            const syncTimeSpan = document.getElementById("last-sync-time");
+            if (syncTimeSpan) {
+              syncTimeSpan.textContent = data.last_update ? data.last_update : "暂无新数据";
+            }
+            // 👆 新增结束 👆
+
             let imagesData = [];
             let monthsData = [];
 
