@@ -12,7 +12,7 @@ export default async function onRequest(context) {
     return new Response("Invalid format parameter", { status: 400 });
   }
 
-  // 确定图片路径 (如果你配置了static为根目录，这样写是对的)
+  // 确定图片路径
   const imagePath = format === "jpeg" 
     ? "/daily.jpeg" 
     : format === "original" 
@@ -20,18 +20,22 @@ export default async function onRequest(context) {
       : "/daily.webp";
 
   // 构造目标 URL
-  const imageUrl = new URL(request.url);
-  imageUrl.pathname = imagePath;
+  const imageUrl = new URL(imagePath, request.url);
+
+  // 🌟【修改点 1】：为目标 URL 注入时间戳参数
+  // 作用：强制穿透 CDN 节点或浏览器可能存在的陈旧缓存，确保获取的是 Actions 最新生成的图片
+  imageUrl.searchParams.set('t', Date.now());
 
   // 如果需要重定向
   if (redirect) {
+    // 🌟【修改点 2】：302 重定向时携带时间戳
+    // 解决浏览器因 URL 固定而直接读取本地磁盘缓存导致图片不更新的问题
     return Response.redirect(imageUrl.toString(), 302);
   }
 
-  // 第一次请求：带 Request 对象，可命中 EdgeOne 缓存
+  // 尝试从缓存或源站获取
   let originResponse = await fetch(new Request(imageUrl.toString(), request));
 
-  // 第二次请求：直连 origin（兜底方案）
   if (!originResponse.ok) {
     originResponse = await fetch(imageUrl.toString());
     if (!originResponse.ok) {
@@ -39,8 +43,13 @@ export default async function onRequest(context) {
     }
   }
 
-  // 🌟 核心修复：创建一个全新的 Headers 对象，彻底避免只读报错
+  // 创建全新的 Headers 对象
   const newHeaders = new Headers(originResponse.headers);
+  
+  // 🌟【修改点 3】：添加跨域访问支持
+  // 允许你的 API 被其他站点（如个人博客）直接调用作为背景
+  newHeaders.set("Access-Control-Allow-Origin", "*");
+  
   newHeaders.set("bing-cache", originResponse.redirected ? "BYPASS" : "EDGEONE");
   newHeaders.set("Cache-Control", "public, max-age=10800"); // 浏览器缓存 3 小时
 
